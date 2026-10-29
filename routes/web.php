@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -16,27 +16,38 @@ use App\Http\Controllers\LaporanController;
 |--------------------------------------------------------------------------
 */
 
-// Redirect Halaman Utama
+// Halaman utama diarahkan ke dashboard
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-// Route Dashboard Utama
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Login (hanya untuk yang belum login)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+});
 
-// Route Resource Modul Inventaris
-Route::resource('products', ProductController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('supplier', SupplierController::class);
-Route::resource('suppliers', SupplierController::class);
-Route::resource('pembelian', PurchaseController::class);
-Route::resource('penjualan', SaleController::class);
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+// Logout (GET dan POST supaya tombol logout tetap jalan)
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route Logout (Bisa GET dan POST agar tidak Error 419 / MethodNotAllowed)
-Route::match(['get', 'post'], '/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/dashboard');
-})->name('logout');
+// Semua halaman di bawah ini wajib login
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('products', ProductController::class);
+    Route::resource('categories', CategoryController::class);
+
+    // Supplier (dua nama, supaya route('supplier.*') dan route('suppliers.*') sama-sama jalan)
+    Route::resource('supplier', SupplierController::class);
+    Route::resource('suppliers', SupplierController::class);
+
+    // Pembelian (route('pembelian.*') dan route('purchases.*') sama-sama jalan)
+    Route::resource('pembelian', PurchaseController::class);
+    Route::resource('purchases', PurchaseController::class);
+
+    // Penjualan (route('penjualan.*') dan route('sales.*') sama-sama jalan)
+    Route::resource('penjualan', SaleController::class);
+    Route::resource('sales', SaleController::class);
+
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+});

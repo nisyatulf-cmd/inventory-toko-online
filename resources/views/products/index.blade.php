@@ -2,83 +2,124 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Daftar Produk - Toko Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Produk - Toko Nisya</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="font-family: sans-serif; padding: 2rem;">
-    <h1 style="color: #1a56db;">Daftar Produk</h1>
-    <p><a href="{{ route('dashboard') }}">&larr; Dashboard</a></p>
+<body class="bg-light">
 
-    @if (session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
+    <div class="d-flex" style="min-height: 100vh;">
+        <!-- Sidebar -->
+        <div class="bg-primary text-white p-3 d-flex flex-column justify-content-between" style="width: 250px; flex-shrink: 0;">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-4 px-2">
+                    <i class="fa-solid fa-boxes-stacked fs-3"></i>
+                    <div>
+                        <h5 class="m-0 fw-bold">Toko Nisya</h5>
+                        <small class="text-white-50" style="font-size: 10px;">INVENTORY MANAGEMENT</small>
+                    </div>
+                </div>
 
-    @if ($errors->any())
-        <ul style="color: red;">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
+                <p class="text-uppercase text-white-50 fw-bold mb-2 px-2" style="font-size: 11px;">Menu Utama</p>
 
-    @can('admin')
-        <p><a href="{{ route('products.create') }}">+ Tambah Produk</a></p>
-    @endcan
+                <div class="nav flex-column gap-1">
+                    <a class="nav-link text-white rounded" href="{{ route('dashboard') }}"><i class="fa-solid fa-house me-2"></i> Dashboard</a>
+                    <a class="nav-link text-primary bg-white fw-bold rounded" href="{{ route('products.index') }}"><i class="fa-solid fa-box me-2"></i> Data Produk</a>
+                    <a class="nav-link text-white rounded" href="{{ route('categories.index') }}"><i class="fa-solid fa-layer-group me-2"></i> Kategori</a>
+                    <a class="nav-link text-white rounded" href="{{ route('supplier.index') }}"><i class="fa-solid fa-truck me-2"></i> Supplier</a>
+                    <a class="nav-link text-white rounded" href="{{ route('pembelian.index') }}"><i class="fa-solid fa-cart-shopping me-2"></i> Pembelian</a>
+                    <a class="nav-link text-white rounded" href="{{ route('penjualan.index') }}"><i class="fa-solid fa-cash-register me-2"></i> Penjualan</a>
+                    <a class="nav-link text-white rounded" href="{{ route('laporan.index') }}"><i class="fa-solid fa-file-invoice me-2"></i> Laporan</a>
+                </div>
+            </div>
 
-    <form method="GET" action="{{ route('products.index') }}" style="margin-bottom: 1rem;">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari SKU / nama">
-        <select name="category_id">
-            <option value="">Semua kategori</option>
-            @foreach ($categories as $category)
-                <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </select>
-        <button type="submit" style="background: #1a56db; color: white; border: 0; padding: 0.4rem 0.9rem;">Cari</button>
-    </form>
+            <div class="pt-3 border-top border-white-50">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
 
-    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
-        <tr style="background: #1a56db; color: white;">
-            <th>No</th>
-            <th>SKU</th>
-            <th>Nama</th>
-            <th>Kategori</th>
-            <th>Harga Jual</th>
-            <th>Stok</th>
-            @can('admin')
-                <th>Aksi</th>
-            @endcan
-        </tr>
-        @forelse ($products as $product)
-            <tr>
-                <td>{{ $products->firstItem() + $loop->index }}</td>
-                <td>{{ $product->sku }}</td>
-                <td>{{ $product->name }}</td>
-                <td>{{ $product->category->name }}</td>
-                <td>Rp {{ number_format($product->selling_price, 0, ',', '.') }}</td>
-                <td style="{{ $product->stock <= $product->minimum_stock ? 'color: red; font-weight: bold;' : '' }}">
-                    {{ $product->stock }}
-                </td>
-                @can('admin')
-                    <td>
-                        <a href="{{ route('products.edit', $product) }}">Edit</a>
-                        <form method="POST" action="{{ route('products.destroy', $product) }}" style="display: inline;" onsubmit="return confirm('Hapus produk ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" style="background: #1a56db; color: white; border: 0; padding: 0.2rem 0.6rem;">Hapus</button>
-                        </form>
-                    </td>
-                @endcan
-            </tr>
-        @empty
-            <tr>
-                <td colspan="7">Belum ada produk.</td>
-            </tr>
-        @endforelse
-    </table>
+        <!-- Main Content -->
+        <div class="flex-grow-1 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold m-0">Data Produk</h3>
+                    <small class="text-muted">Kelola daftar produk Toko Nisya</small>
+                </div>
+                <a href="{{ route('products.create') }}" class="btn btn-primary fw-bold">
+                    <i class="fa-solid fa-plus me-1"></i> Tambah Produk
+                </a>
+            </div>
 
-    <div style="margin-top: 1rem;">
-        {{ $products->links() }}
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">No</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th style="width: 170px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse (($products ?? []) as $product)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $product->name ?? $product->nama ?? $product->nama_produk ?? '-' }}</td>
+                                    <td>{{ optional($product->category)->name ?? optional($product->category)->nama ?? '-' }}</td>
+                                    <td>
+                                        @php
+                                            $harga = $product->selling_price ?? $product->harga_jual ?? $product->harga ?? $product->price ?? null;
+                                        @endphp
+                                        {{ $harga !== null ? 'Rp ' . number_format($harga, 0, ',', '.') : '-' }}
+                                    </td>
+                                    <td>{{ $product->stock ?? $product->stok ?? 0 }}</td>
+                                    <td>
+                                        <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-warning">
+                                            <i class="fa-solid fa-pen"></i> Edit
+                                        </a>
+                                        <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline-block;"
+                                              onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fa-solid fa-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        Belum ada produk. Klik "Tambah Produk" untuk menambahkan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (isset($products) && method_exists($products, 'links'))
+                <div class="mt-3">{{ $products->links() }}</div>
+            @endif
+        </div>
     </div>
+
 </body>
 </html>

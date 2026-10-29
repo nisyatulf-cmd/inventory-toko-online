@@ -7,18 +7,16 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Tampilkan halaman login
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // Proses login
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required'],
+            'email'    => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
@@ -31,14 +29,12 @@ class AuthController extends Controller
             ->onlyInput('email');
     }
 
-    // Proses logout
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

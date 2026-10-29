@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id', 'name', 'sku',
-        'purchase_price', 'selling_price',
-        'stock', 'minimum_stock',
+        'sku',
+        'name',
+        'category_id',
+        'purchase_price',
+        'selling_price',
+        'stock',
+        'minimum_stock',
     ];
 
     public function category()
@@ -17,6 +21,8 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    // Dipakai di ProductController@destroy.
+    // Hapus dua fungsi ini kalau model SaleItem / PurchaseItem belum ada.
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);

@@ -1,35 +1,81 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Login - Toko Online</title>
-<style>
-body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:#f2f7ff;color:#1f2937;padding:2rem}
-.card{max-width:400px;margin:3rem auto;background:#fff;border-radius:16px;padding:1.6rem;box-shadow:0 2px 8px rgba(29,111,242,.12)}
-h1{margin:0 0 1rem;color:#1553c7;font-size:1.5rem}
-label{display:block;font-weight:600;margin:.9rem 0 .3rem}
-input{width:100%;box-sizing:border-box;padding:.65rem .8rem;border:1px solid #e5e7eb;border-radius:10px;font-size:.95rem}
-.err{color:#e11d48;font-size:.85rem;margin-top:.25rem}
-.btn{width:100%;margin-top:1.3rem;background:#1d6ff2;color:#fff;border:0;padding:.7rem;border-radius:10px;font-weight:600;cursor:pointer}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Toko Nisya</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .card {
+            width: 100%;
+            max-width: 380px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px 28px;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+        }
+        h1 { margin: 0 0 4px; color: #1d4ed8; font-size: 24px; }
+        p.sub { margin: 0 0 24px; color: #6b7280; font-size: 14px; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; color: #374151; }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        input:focus { outline: 2px solid #2563eb; border-color: transparent; }
+        button {
+            width: 100%;
+            padding: 11px;
+            background: #2563eb;
+            color: #ffffff;
+            border: 0;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover { background: #1d4ed8; }
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<div class="card">
-  <h1>Login</h1>
-  <form method="POST" action="{{ url('/login') }}">
-    @csrf
+    <div class="card">
+        <h1>Toko Nisya</h1>
+        <p class="sub">Masuk untuk mengelola inventaris</p>
 
-    <label>Email</label>
-    <input type="email" name="email" value="{{ old('email') }}" autofocus>
-    @error('email')<div class="err">{{ $message }}</div>@enderror
+        @if ($errors->any())
+            <div class="error">{{ $errors->first() }}</div>
+        @endif
 
-    <label>Password</label>
-    <input type="password" name="password">
-    @error('password')<div class="err">{{ $message }}</div>@enderror
+        <form method="POST" action="{{ route('login.process') }}">
+            @csrf
 
-    <button type="submit" class="btn">Masuk</button>
-  </form>
-</div>
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" value="{{ old('email') }}" autofocus>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+
+            <button type="submit">Masuk</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -1,77 +1,78 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tambah Produk - Toko Online</title>
-<style>
-body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:#f2f7ff;color:#1f2937;padding:2rem}
-.card{max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:1.6rem;box-shadow:0 2px 8px rgba(29,111,242,.12)}
-h1{margin:0 0 1rem;color:#1553c7;font-size:1.5rem}
-label{display:block;font-weight:600;margin:.9rem 0 .3rem}
-input,select{width:100%;padding:.65rem .8rem;border:1px solid #e5e7eb;border-radius:10px;font-size:.95rem}
-.err{color:#e11d48;font-size:.85rem;margin-top:.25rem}
-.row{display:flex;gap:.8rem}
-.row>div{flex:1}
-.btn{background:#1d6ff2;color:#fff;border:0;padding:.7rem 1.2rem;border-radius:10px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
-.btn-light{background:#e6f0ff;color:#1d6ff2}
-.actions{display:flex;gap:.5rem;margin-top:1.3rem}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Produk</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f3f4f6; margin: 0; padding: 30px; }
+        .box { max-width: 560px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 10px; }
+        h1 { color: #1d4ed8; margin-top: 0; }
+        label { display: block; margin: 14px 0 6px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        button { margin-top: 18px; padding: 10px 20px; background: #2563eb; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+        a { margin-left: 10px; color: #555; }
+        .error { background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 6px; }
+    </style>
 </head>
 <body>
-<div class="card">
-  <h1>Tambah Produk</h1>
-  <form method="POST" action="{{ route('products.store') }}">
-    @csrf
+    <div class="box">
+        <h1>Tambah Produk</h1>
 
-    <label>SKU</label>
-    <input type="text" name="sku" value="{{ old('sku') }}">
-    @error('sku')<div class="err">{{ $message }}</div>@enderror
+        @if ($errors->any())
+            <div class="error">
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
 
-    <label>Nama produk</label>
-    <input type="text" name="name" value="{{ old('name') }}">
-    @error('name')<div class="err">{{ $message }}</div>@enderror
+        <form action="{{ route('products.store') }}" method="POST">
+            @csrf
 
-    <label>Kategori</label>
-    <select name="category_id">
-      <option value="">-- Pilih kategori --</option>
-      @foreach ($categories as $category)
-        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-      @endforeach
-    </select>
-    @error('category_id')<div class="err">{{ $message }}</div>@enderror
+            <label for="sku">SKU</label>
+            <input type="text" id="sku" name="sku" value="{{ old('sku') }}">
 
-    <div class="row">
-      <div>
-        <label>Harga beli</label>
-        <input type="number" name="purchase_price" min="0" value="{{ old('purchase_price') }}">
-        @error('purchase_price')<div class="err">{{ $message }}</div>@enderror
-      </div>
-      <div>
-        <label>Harga jual</label>
-        <input type="number" name="selling_price" min="0" value="{{ old('selling_price') }}">
-        @error('selling_price')<div class="err">{{ $message }}</div>@enderror
-      </div>
+            <label for="name">Nama produk</label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}">
+
+            <label for="category_id">Kategori</label>
+            <select id="category_id" name="category_id">
+                <option value="">-- Pilih kategori --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+
+            <div class="row">
+                <div>
+                    <label for="purchase_price">Harga beli</label>
+                    <input type="number" id="purchase_price" name="purchase_price" min="0" value="{{ old('purchase_price') }}">
+                </div>
+                <div>
+                    <label for="selling_price">Harga jual</label>
+                    <input type="number" id="selling_price" name="selling_price" min="0" value="{{ old('selling_price') }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <label for="stock">Stok awal</label>
+                    <input type="number" id="stock" name="stock" min="0" value="{{ old('stock', 0) }}">
+                </div>
+                <div>
+                    <label for="minimum_stock">Stok minimum</label>
+                    <input type="number" id="minimum_stock" name="minimum_stock" min="0" value="{{ old('minimum_stock', 5) }}">
+                </div>
+            </div>
+
+            <button type="submit">Simpan</button>
+            <a href="{{ route('products.index') }}">Batal</a>
+        </form>
     </div>
-
-    <div class="row">
-      <div>
-        <label>Stok awal</label>
-        <input type="number" name="stock" min="0" value="{{ old('stock', 0) }}">
-        @error('stock')<div class="err">{{ $message }}</div>@enderror
-      </div>
-      <div>
-        <label>Stok minimum</label>
-        <input type="number" name="minimum_stock" min="0" value="{{ old('minimum_stock', 5) }}">
-        @error('minimum_stock')<div class="err">{{ $message }}</div>@enderror
-      </div>
-    </div>
-
-    <div class="actions">
-      <button type="submit" class="btn">Simpan</button>
-      <a href="{{ route('products.index') }}" class="btn btn-light">Batal</a>
-    </div>
-  </form>
-</div>
 </body>
 </html>

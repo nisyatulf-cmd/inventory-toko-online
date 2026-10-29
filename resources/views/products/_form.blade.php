@@ -1,19 +1,13 @@
-@if ($errors->any())
-    <ul class="error">
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-@endif
+@php $product = $product ?? null; @endphp
 
-<label>SKU</label>
-<input type="text" name="sku" value="{{ old('sku', $product->sku ?? '') }}">
+<label for="sku">SKU</label>
+<input type="text" id="sku" name="sku" value="{{ old('sku', $product->sku ?? '') }}">
 
-<label>Nama</label>
-<input type="text" name="name" value="{{ old('name', $product->name ?? '') }}">
+<label for="name">Nama produk</label>
+<input type="text" id="name" name="name" value="{{ old('name', $product->name ?? '') }}">
 
-<label>Kategori</label>
-<select name="category_id">
+<label for="category_id">Kategori</label>
+<select id="category_id" name="category_id">
     <option value="">-- Pilih kategori --</option>
     @foreach ($categories as $category)
         <option value="{{ $category->id }}"
@@ -23,17 +17,24 @@
     @endforeach
 </select>
 
-<label>Harga Beli</label>
-<input type="number" name="purchase_price" min="0" value="{{ old('purchase_price', $product->purchase_price ?? '') }}">
+<div class="row">
+    <div>
+        <label for="purchase_price">Harga beli</label>
+        <input type="number" id="purchase_price" name="purchase_price" min="0" value="{{ old('purchase_price', $product->purchase_price ?? '') }}">
+    </div>
+    <div>
+        <label for="selling_price">Harga jual</label>
+        <input type="number" id="selling_price" name="selling_price" min="0" value="{{ old('selling_price', $product->selling_price ?? '') }}">
+    </div>
+</div>
 
-<label>Harga Jual</label>
-<input type="number" name="selling_price" min="0" value="{{ old('selling_price', $product->selling_price ?? '') }}">
-
-<label>Stok</label>
-<input type="number" name="stock" min="0" value="{{ old('stock', $product->stock ?? 0) }}">
-
-<label>Stok Minimum</label>
-<input type="number" name="minimum_stock" min="0" value="{{ old('minimum_stock', $product->minimum_stock ?? 0) }}">
-
-<button type="submit">Simpan</button>
-<a href="{{ route('products.index') }}">Batal</a>
+<div class="row">
+    <div>
+        <label for="stock">Stok</label>
+        <input type="number" id="stock" name="stock" min="0" value="{{ old('stock', $product->stock ?? 0) }}">
+    </div>
+    <div>
+        <label for="minimum_stock">Stok minimum</label>
+        <input type="number" id="minimum_stock" name="minimum_stock" min="0" value="{{ old('minimum_stock', $product->minimum_stock ?? 5) }}">
+    </div>
+</div>
